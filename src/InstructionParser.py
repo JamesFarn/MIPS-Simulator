@@ -17,7 +17,8 @@ class InstructionParser(object):
                         'addiu', 'slti', 'sltiu', 'andi', 'xori', 'lui', 'li',
                         'bne', 'beq', 'blez', 'bgtz', 'bltz', 'bgez', 'bnez', 'beqz',
                         'move'],
-            'jtype': ['j', 'jal']
+            'jtype': ['j', 'jal'],
+			'ctype':['xorisltu']
         }
 
         self.loglines = { 
@@ -62,6 +63,8 @@ class InstructionParser(object):
             return self.createITypeInstruction(s)    
         elif instr in self.instructionSet['jtype']:
             return self.createJTypeInstruction(s)
+        elif instr in self.instructionSet['ctype']:
+            return self.createCTypeInstruction(s)	
         else:
             print "Could not parse instruction: ", instr
             raise ParseError("Invalid parse instruction")
@@ -139,7 +142,10 @@ class InstructionParser(object):
     def createJTypeInstruction(self, s):
         # J or JAL
         return Instruction(op=s[0], target=s[1], branch=1)
-
+	
+    def createCTypeInstruction(self, s):
+        # C combine 
+        return Instruction(op=s[0], dest=s[1], s1=s[2], s2=s[3], s3=s[4], regRead=1, regWrite=1, aluop=1)
 
 ##########################################################
 #

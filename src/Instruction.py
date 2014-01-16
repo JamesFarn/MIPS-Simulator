@@ -68,6 +68,11 @@ class Instruction(object):
         return self.values['s2']
 
     @property
+    def s3(self):
+        """ Get this Instruction's third source register """
+        return self.values['s3']
+
+    @property
     def shamt(self):
         """ Get this Instruction's shift amount """
         return self.values['shamt']
@@ -121,6 +126,19 @@ class Instruction(object):
                                   self.values['immed'] if self.values['immed'] else "",
                                   self.values['target'] if self.values['target'] else "")
         return str
+
+    def __str2__(self):
+        str = "%s\t%s %s %s %s %s %s %s" % (self.values['op'],
+                                  self.values['dest'] if self.values['dest'] else "",
+                                  self.values['s1'] if self.values['s1'] else "",
+                                  self.values['s2'] if self.values['s2'] else "",
+                                  self.values['s3'] if self.values['s3'] else "",
+                                  self.values['shamt'] if self.values['shamt'] else "",
+                                  self.values['immed'] if self.values['immed'] else "",
+                                  self.values['target'] if self.values['target'] else "")
+        return str
+
+
     
     def __repr__(self):
         return repr(self.values)
@@ -131,6 +149,8 @@ class Nop(Instruction):
         """ Get this Instruction's name """
         return 'nop' 
     def __str__(self):
+        return 'nop'
+    def __str2__(self):
         return 'nop'  
     pass
     
