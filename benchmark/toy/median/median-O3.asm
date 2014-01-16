@@ -166,7 +166,8 @@ int main () {
   d4:        38840003         xori        a0,a0,0x3
  //d8:        38630004         xori        v1,v1,0x4
  //dc:        0003182b         sltu        v1,zero,v1
-	aa:		  00000000		 xorisltu	   v1, zero, v1,0x4
+  
+  aa:		 01111111		  xorisltu        v1,zero,v1,0x4
  
   e0:        8fa2001c         lw        v0,28(sp)
   e4:        0004202b         sltu        a0,zero,a0
