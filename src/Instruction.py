@@ -30,6 +30,7 @@ class Instruction(object):
                        'dest': None,
                        's1': None,
                        's2': None,
+                       's3': None,
                        'immed': None,
                        'shamt': None,
                        'target': None

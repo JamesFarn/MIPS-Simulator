@@ -9,7 +9,7 @@ class PipelineSimulator(object):
                     'and':'&',  'andi':'&',   'or':'|',   'ori':'|',
                     'sll':'<<', 'sllv':'<<', 'srl':'>>', 'srlv':'>>',
                     'sra':'>>', 'srav':'>>',
-                    'div':'/',   'mul':'*',  'xor':'^',  'xori':'^'  }
+                    'div':'/',   'mul':'*',  'xor':'^',  'xori':'^', 'xorisltu':'^'}
                   
     def __init__(self,instrCollection,dataMem,mainAddr,oldstdout,verbose,quiet):
         sys.stdout = oldstdout
@@ -349,6 +349,9 @@ class ReadStage(PipelineStage):
             elif self.instr.s2:
                 self.instr.source2RegValue = int(self.simulator.registers[self.instr.s2])
 
+            elif self.instr.s3:
+                self.instr.source3RegValue = int(self.simulator.registers[self.instr.s3])
+
         # Update PC
         if self.instr.op == 'jal':
             # Save return address in $ra = $r31
@@ -496,10 +499,19 @@ class ExecStage(PipelineStage):
                 elif (self.instr.op == 'nor'):
                     self.instr.result = ~(self.instr.source1RegValue | self.instr.source2RegValue)
                 else:
-                    self.instr.result = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
-                            self.simulator.alu_operations[self.instr.op], 
-                            int((self.instr.source2RegValue))))
+                    if (self.instr.op in self.simulator.alu_operations):
+                        self.instr.result = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
+                                self.simulator.alu_operations[self.instr.op], 
+                                int((self.instr.source2RegValue))))
+                    else:
+                        if (self.instr.op in ['xorisltu']):
 
+                            a = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
+                                self.simulator.alu_operations[self.instr.op], 
+                                int((self.instr.source2RegValue))))
+                            b = int(self.instr.source3RegValue)
+                            self.instr.result = 1 if (a<b) else 0
+                            
         if(self.instr.result is not None):
             self.instr.result = self.instr.result & 0xFFFFFFFF
 
