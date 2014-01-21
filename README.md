@@ -1,5 +1,6 @@
 ## Python Simulator written for iDEA
 by Fred and Hui Yan
+attached with FYP student Shao Qiu
 
 Original repo: https://github.com/maguire/MIPS-Simulator
 (credit to user 'maguire')
