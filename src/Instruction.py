@@ -24,6 +24,7 @@ class Instruction(object):
         
         self.source1RegValue = None 
         self.source2RegValue = None
+        self.source3RegValue = None
         self.sourceAddr = None
         self.values = {
                        'op': None,

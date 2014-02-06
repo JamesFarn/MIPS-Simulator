@@ -338,6 +338,7 @@ class ReadStage(PipelineStage):
 
         if(self.instr.regRead):
             self.instr.source1RegValue = int(self.simulator.registers[self.instr.s1])
+            
             if (self.instr.immed and
                 #these instructions require special treatment
                 (self.instr.op not in ['lw', 'sw', 'bne', 'beq', 'beqz', 'bnez', 'blez', 
@@ -349,7 +350,7 @@ class ReadStage(PipelineStage):
             elif self.instr.s2:
                 self.instr.source2RegValue = int(self.simulator.registers[self.instr.s2])
 
-            elif self.instr.s3:
+            elif (self.instr.op in ['xorisltu']):
                 self.instr.source3RegValue = int(self.simulator.registers[self.instr.s3])
 
         # Update PC
@@ -422,6 +423,18 @@ class ExecStage(PipelineStage):
                 else :
                     self.simulator.stall = True
                     return
+
+            if self.instr.s3 in self.simulator.hazardList and self.instr.s3 is not '$r0':
+                forwardVal = self.simulator.getForwardVal(self.instr.s2)
+                if forwardVal != "NOVAL" :
+                    self.instr.source3RegValue = forwardVal
+                    if(self.simulator.verbose):
+                        print "Forwarding register", self.instr.s3, " = ", forwardVal
+                else :
+                    self.simulator.stall = True
+                    return
+
+
 
             #append the destination register to the hazard list 
             if self.instr.regWrite :
@@ -498,20 +511,30 @@ class ExecStage(PipelineStage):
                     self.instr.result = 1 if (a<b) else 0
                 elif (self.instr.op == 'nor'):
                     self.instr.result = ~(self.instr.source1RegValue | self.instr.source2RegValue)
-                else:
-                    if (self.instr.op in self.simulator.alu_operations):
-                        self.instr.result = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
-                                self.simulator.alu_operations[self.instr.op], 
-                                int((self.instr.source2RegValue))))
-                    else:
-                        if (self.instr.op in ['xorisltu']):
 
-                            a = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
-                                self.simulator.alu_operations[self.instr.op], 
-                                int((self.instr.source2RegValue))))
-                            b = int(self.instr.source3RegValue)
-                            self.instr.result = 1 if (a<b) else 0
-                            
+                elif (self.instr.op == 'xorisltu'):
+
+                    a = eval("%d %s %d " % (int((self.instr.source1RegValue)), 
+                       self.simulator.alu_operations[self.instr.op], 
+                       int((self.instr.source2RegValue))))
+                    #b = int(self.instr.source3RegValue)
+                    b = 0
+                    self.instr.result = 1 if (a<b) else 0
+                    
+                else:
+                    #if (self.instr.op in self.simulator.alu_operations):
+                    self.instr.result = eval("%d %s %d" % (int((self.instr.source1RegValue)), 
+                             self.simulator.alu_operations[self.instr.op], 
+                             int((self.instr.source2RegValue))))
+                    #else:
+                        #if (self.instr.op in ['xorisltu']):
+
+                            #a = eval("%d %s %d %d" % (int((self.instr.source1RegValue)), 
+                            #    self.simulator.alu_operations[self.instr.op], 
+                            #    int((self.instr.source2RegValue))))
+                            #b = int(self.instr.source3RegValue)
+                            #self.instr.result = 1 if (a<b) else 0
+                
         if(self.instr.result is not None):
             self.instr.result = self.instr.result & 0xFFFFFFFF
 
