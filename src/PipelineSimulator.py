@@ -518,7 +518,8 @@ class ExecStage(PipelineStage):
                        self.simulator.alu_operations[self.instr.op], 
                        int((self.instr.source2RegValue))))
                     #b = int(self.instr.source3RegValue)
-                    b = 0
+                    #To be check again
+					b = 0
                     self.instr.result = 1 if (a<b) else 0
                     
                 else:
