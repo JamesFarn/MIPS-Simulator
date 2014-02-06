@@ -1,3 +1,10 @@
+#Added by James
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+(set -o igncr) 2>/dev/null && set -o igncr; # this comment is needed
+#End added by James
+
 #!/bin/bash
 
 # Bash script to run all toy benchmark simulations
